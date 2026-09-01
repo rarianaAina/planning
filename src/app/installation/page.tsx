@@ -29,6 +29,18 @@ const STEPS = [
     ),
   },
   {
+    title: "Autoriser l'accès sans compte",
+    body: (
+      <>
+        Dans <strong>Authentication → Sign In / Providers</strong>, activer{" "}
+        <strong>Anonymous Sign-Ins</strong>. C&rsquo;est ce qui permet
+        d&rsquo;utiliser l&rsquo;application sans inscription. Sans cette
+        option, l&rsquo;application fonctionne, mais impose la création
+        d&rsquo;un compte.
+      </>
+    ),
+  },
+  {
     title: "Renseigner les deux variables d'environnement",
     body: (
       <>
@@ -59,7 +71,7 @@ export default function InstallationPage() {
       <h1 className="text-2xl font-bold tracking-tight">Configuration requise</h1>
       <p className="mt-2 text-sm text-[var(--muted)]">
         L&rsquo;application a besoin d&rsquo;une base Supabase pour enregistrer le
-        planning. Quatre étapes, une seule fois.
+        planning. Cinq étapes, une seule fois.
       </p>
 
       <ol className="mt-7 space-y-5">

@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { ClaimAccountForm } from "@/components/ClaimAccountForm";
 import { SettingsForm } from "@/components/SettingsForm";
+import { SubmitButton } from "@/components/SubmitButton";
 import { WeekBadge } from "@/components/WeekBadge";
+import { signOutAction } from "@/lib/actions";
 import { getSettings, requireUser } from "@/lib/queries";
 import { addDays, formatWeekRange, mondayOf, todayISO } from "@/lib/date";
 import { weekTypeFor } from "@/lib/schedule";
@@ -52,12 +55,34 @@ export default async function ReglagesPage() {
         </ul>
       </section>
 
-      <section className="mt-6">
+      <section id="compte" className="mt-6 scroll-mt-20">
         <h2 className="mb-2 text-sm font-semibold">Compte</h2>
-        <div className="card px-4 py-3 text-sm">
-          <span className="text-[var(--muted)]">Connecté en tant que </span>
-          <span className="font-medium">{user.email}</span>
-        </div>
+
+        {user.is_anonymous ? (
+          <>
+            <p className="mb-3 rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2.5 text-sm text-[var(--muted)]">
+              Vous utilisez l&rsquo;application <strong>sans compte</strong>. Votre
+              planning est bien enregistré, mais rattaché à ce navigateur
+              uniquement&nbsp;: en effaçant les données du navigateur ou en
+              passant sur un autre appareil, vous ne le retrouveriez pas.
+              Associez-lui une adresse e-mail pour le conserver — tout ce que
+              vous avez déjà saisi est gardé.
+            </p>
+            <ClaimAccountForm />
+          </>
+        ) : (
+          <>
+            <div className="card px-4 py-3 text-sm">
+              <span className="text-[var(--muted)]">Connecté en tant que </span>
+              <span className="font-medium">{user.email}</span>
+            </div>
+            <form action={signOutAction} className="mt-3">
+              <SubmitButton className="btn" pendingLabel="…">
+                Se déconnecter
+              </SubmitButton>
+            </form>
+          </>
+        )}
       </section>
     </div>
   );

@@ -36,15 +36,25 @@ export default async function AppLayout({
             >
               Réglages
             </Link>
-            <form action={signOutAction}>
-              <button
-                type="submit"
-                className="rounded-lg px-2.5 py-1.5 text-[0.8125rem] font-semibold text-[var(--muted)] hover:bg-[var(--surface-muted)]"
-                title={user.email ?? undefined}
+            {user.is_anonymous ? (
+              <Link
+                href="/reglages#compte"
+                className="badge badge-custom !py-1"
+                title="Planning enregistré pour ce navigateur uniquement — associez-lui un e-mail pour le conserver"
               >
-                Quitter
-              </button>
-            </form>
+                Mode invité
+              </Link>
+            ) : (
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="rounded-lg px-2.5 py-1.5 text-[0.8125rem] font-semibold text-[var(--muted)] hover:bg-[var(--surface-muted)]"
+                  title={user.email ?? undefined}
+                >
+                  Quitter
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </header>

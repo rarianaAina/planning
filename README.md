@@ -5,6 +5,11 @@ Application web qui remplace un planning papier en semaines alternées
 consultable **par jour, par semaine et par mois**, sur téléphone comme sur
 ordinateur.
 
+- **Accès sans compte** — on arrive sur l'application et on s'en sert
+  immédiatement, sans rien saisir : une session invitée est ouverte à la volée.
+  Le planning est enregistré en base et rattaché au navigateur. On peut à tout
+  moment lui associer une adresse e-mail pour le retrouver ailleurs, sans rien
+  perdre de ce qui a déjà été saisi.
 - **Modèle A/B** — on saisit une fois les deux semaines types ; elles se
   répètent ensuite indéfiniment en alternance.
 - **Modification à la journée** — n'importe quelle date peut être ajustée
@@ -28,7 +33,10 @@ Supabase (Postgres + authentification), déploiement Vercel.
    [`supabase/schema.sql`](supabase/schema.sql), puis exécuter. Cela crée les
    quatre tables, les politiques RLS (chaque compte ne voit que ses propres
    données) et le déclencheur qui initialise les réglages à l'inscription.
-3. Dans **Project Settings → API**, relever l'**URL du projet** et la clé
+3. Activer l'accès sans compte : **Authentication → Sign In / Providers →
+   Anonymous Sign-Ins → Enable**. Sans cela, l'application reste utilisable
+   mais impose la création d'un compte.
+4. Dans **Project Settings → API**, relever l'**URL du projet** et la clé
    **anon public**.
 
 ### Confirmation par e-mail (optionnel)
@@ -66,7 +74,7 @@ d'environnement, elle affiche une page d'installation qui rappelle ces étapes.
 
 ## 4. Premier usage
 
-1. Créer un compte depuis l'écran de connexion.
+1. Ouvrir l'application : elle est utilisable tout de suite, sans compte.
 2. **Réglages** — indiquer une semaine dont on est sûr et son type (A ou B).
    Toute l'alternance en découle, dans le passé comme dans le futur.
 3. **Modèle A/B** — saisir les créneaux de la semaine A, puis ceux de la
@@ -74,6 +82,19 @@ d'environnement, elle affiche une page d'installation qui rappelle ces étapes.
    quand les deux semaines se ressemblent.
 4. Consulter le planning en vue mois, semaine ou jour, et ajuster une date
    ponctuelle depuis la vue jour.
+5. Quand le planning est en place, **Réglages → Compte** permet de lui
+   associer un e-mail et un mot de passe. L'identifiant interne ne change
+   pas : le planning est conservé, et devient accessible depuis n'importe
+   quel appareil.
+
+### Sessions invitées
+
+Une session invitée est un vrai utilisateur Supabase, sans e-mail, dont la
+session vit dans un cookie. Les politiques RLS s'y appliquent exactement de la
+même façon : un invité ne voit que son propre planning. Tant qu'aucune adresse
+n'y est associée, effacer les données du navigateur rend le planning
+inaccessible — c'est le compromis de l'accès sans inscription, et l'écran des
+réglages le rappelle.
 
 ---
 
@@ -111,7 +132,8 @@ src/
     queries.ts      lectures Supabase côté serveur
     actions.ts      Server Actions (écritures)
     supabase/       clients navigateur et serveur
-  proxy.ts          rafraîchit la session et protège les routes
+  proxy.ts          ouvre la session invitée, rafraîchit le jeton et
+                    protège les routes
 supabase/schema.sql tables, RLS et déclencheurs
 ```
 
