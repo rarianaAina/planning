@@ -13,7 +13,7 @@ export default async function AppLayout({
     <div className="flex min-h-full flex-col">
       <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[color-mix(in_oklab,var(--surface)_88%,transparent)] backdrop-blur">
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-2.5">
-          <Link href="/mois" className="flex items-center gap-2 font-bold tracking-tight">
+          <Link href="/semaine" className="flex items-center gap-2 font-bold tracking-tight">
             <span
               aria-hidden
               className="grid size-7 place-items-center rounded-lg bg-[var(--accent)] text-[0.7rem] font-black text-white dark:text-[#10121a]"

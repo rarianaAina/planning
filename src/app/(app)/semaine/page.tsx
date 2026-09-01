@@ -1,12 +1,14 @@
 import Link from "next/link";
+import { DayList } from "@/components/DayList";
 import { PageHeader } from "@/components/PageHeader";
 import { CustomBadge, WeekBadge } from "@/components/WeekBadge";
 import { SlotBlock } from "@/components/SlotVisuals";
 import { loadDays } from "@/lib/queries";
 import {
   addDays,
+  formatDayRange,
   formatDuration,
-  formatWeekRange,
+  isoWeekNumber,
   minutesToTime,
   parseDateParam,
   todayISO,
@@ -44,19 +46,29 @@ export default async function SemainePage({
       <PageHeader
         view="semaine"
         date={date}
-        title={formatWeekRange(date)}
+        title={`Semaine ${isoWeekNumber(date)}`}
         prev={`/semaine?d=${addDays(date, -7)}`}
         next={`/semaine?d=${addDays(date, 7)}`}
         today={`/semaine?d=${todayISO()}`}
         meta={<WeekBadge type={days[0].weekType} />}
         subtitle={
-          minutes === 0
-            ? "Aucun créneau cette semaine."
-            : `${formatDuration(minutes)} planifiées sur la semaine.`
+          <>
+            {formatDayRange(date)}
+            {minutes > 0 && (
+              <>
+                <span className="mx-1.5">·</span>
+                {formatDuration(minutes)} au total
+              </>
+            )}
+          </>
         }
       />
 
-      <div className="card overflow-hidden">
+      <div className="lg:hidden">
+        <DayList days={days} today={today} />
+      </div>
+
+      <div className="card hidden overflow-hidden lg:block">
         <div className="scroll-slim overflow-x-auto">
           <div className="min-w-[46rem]">
             {/* En-têtes des jours */}
@@ -143,7 +155,7 @@ export default async function SemainePage({
       </div>
 
       <p className="mt-3 text-xs text-[var(--muted)]">
-        Touchez un jour ou un créneau pour l&rsquo;ouvrir en vue jour et le modifier.
+        Touchez un jour pour l&rsquo;ouvrir et le modifier.
       </p>
     </>
   );

@@ -16,6 +16,7 @@ import {
   capitalize,
   formatDuration,
   formatLongDate,
+  isoWeekNumber,
   parseDateParam,
   todayISO,
 } from "@/lib/date";
@@ -51,11 +52,11 @@ export default async function JourPage({
             {isToday && <span className="badge">Aujourd&rsquo;hui</span>}
           </>
         }
-        subtitle={
+        subtitle={`Semaine ${isoWeekNumber(date)} · ${
           day.slots.length === 0
-            ? "Aucun créneau prévu."
+            ? "aucun créneau prévu"
             : `${day.slots.length} créneau${day.slots.length > 1 ? "x" : ""} · ${formatDuration(minutes)} au total`
-        }
+        }`}
       />
 
       <div className="mb-4 flex flex-wrap items-center gap-2">

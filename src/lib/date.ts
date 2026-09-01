@@ -159,3 +159,46 @@ export function parseDateParam(value: string | string[] | undefined): string {
   }
   return todayISO();
 }
+
+/**
+ * Numéro de semaine ISO-8601 : la semaine 1 est celle qui contient le
+ * premier jeudi de l'année. C'est la numérotation utilisée en France.
+ */
+export function isoWeekNumber(iso: string): number {
+  const target = fromISODate(iso);
+  // On se place sur le jeudi de la semaine : c'est lui qui porte l'année.
+  target.setDate(target.getDate() - (isoWeekday(iso) - 1) + 3);
+
+  const firstThursday = new Date(target.getFullYear(), 0, 4);
+  const offset = ((firstThursday.getDay() + 6) % 7) - 3;
+  firstThursday.setDate(firstThursday.getDate() - offset);
+
+  const week = Math.round(
+    (target.getTime() - firstThursday.getTime()) / (7 * 24 * 60 * 60 * 1000),
+  );
+  return 1 + week;
+}
+
+/**
+ * « du 3 au 9 août 2026 », en n'écrivant le mois et l'année qu'une fois
+ * quand la semaine ne les franchit pas.
+ */
+export function formatDayRange(iso: string): string {
+  const dates = weekDates(iso);
+  const start = fromISODate(dates[0]);
+  const end = fromISODate(dates[6]);
+
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const sameMonth = sameYear && start.getMonth() === end.getMonth();
+
+  const startLabel = sameMonth
+    ? fmt({ day: "numeric" }).format(start)
+    : sameYear
+      ? fmt({ day: "numeric", month: "long" }).format(start)
+      : fmt({ day: "numeric", month: "long", year: "numeric" }).format(start);
+
+  const endLabel = fmt({ day: "numeric", month: "long", year: "numeric" })
+    .format(end);
+
+  return `du ${startLabel} au ${endLabel}`;
+}

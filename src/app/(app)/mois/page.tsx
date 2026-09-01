@@ -7,6 +7,7 @@ import {
   capitalize,
   formatDuration,
   formatMonthYear,
+  isoWeekNumber,
   isSameMonth,
   monthGrid,
   parseDateParam,
@@ -53,7 +54,7 @@ export default async function MoisPage({
 
       <div className="card overflow-hidden">
         {/* En-tête des jours de la semaine */}
-        <div className="grid grid-cols-[1.5rem_repeat(7,1fr)] border-b border-[var(--border)] bg-[var(--surface-muted)]">
+        <div className="grid grid-cols-[2rem_repeat(7,1fr)] border-b border-[var(--border)] bg-[var(--surface-muted)]">
           <div />
           {WEEKDAY_SHORT.map((label) => (
             <div
@@ -68,20 +69,23 @@ export default async function MoisPage({
         {rows.map((row, r) => (
           <div
             key={row[0].date}
-            className={`grid grid-cols-[1.5rem_repeat(7,1fr)] ${
+            className={`grid grid-cols-[2rem_repeat(7,1fr)] ${
               r < rows.length - 1 ? "border-b border-[var(--border)]" : ""
             }`}
           >
             {/* Rail latéral : le type de semaine, comme sur le planning papier */}
             <div
-              className={`grid place-items-center border-r border-[var(--border)] text-[0.68rem] font-black ${
+              className={`flex flex-col items-center justify-center gap-0.5 border-r border-[var(--border)] ${
                 row[0].weekType === "A"
                   ? "bg-[color-mix(in_oklab,#4f46e5_10%,transparent)] text-[color-mix(in_oklab,#4f46e5_70%,var(--foreground))]"
                   : "bg-[color-mix(in_oklab,#0d9488_10%,transparent)] text-[color-mix(in_oklab,#0d9488_70%,var(--foreground))]"
               }`}
-              title={`Semaine ${row[0].weekType}`}
+              title={`Semaine ${isoWeekNumber(row[0].date)} — semaine ${row[0].weekType}`}
             >
-              {row[0].weekType}
+              <span className="text-[0.6rem] font-semibold opacity-70">
+                {isoWeekNumber(row[0].date)}
+              </span>
+              <span className="text-[0.72rem] font-black">{row[0].weekType}</span>
             </div>
 
             {row.map((day) => {
@@ -137,7 +141,7 @@ export default async function MoisPage({
         <span className="flex items-center gap-1.5">
           <span className="size-1.5 rounded-full bg-[#f59e0b]" /> journée modifiée
         </span>
-        <span>La colonne de gauche indique le type de semaine (A ou B).</span>
+        <span>La colonne de gauche donne le numéro de la semaine, puis son type (A ou B).</span>
       </div>
     </>
   );

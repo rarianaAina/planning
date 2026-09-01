@@ -64,7 +64,7 @@ export default async function proxy(request: NextRequest) {
   const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
   if (user && (pathname === "/login" || pathname === "/installation")) {
-    return withCookies(NextResponse.redirect(new URL("/mois", request.url)));
+    return withCookies(NextResponse.redirect(new URL("/semaine", request.url)));
   }
 
   if (!user && !isPublic) {

@@ -16,9 +16,12 @@ ordinateur.
   (créneau ajouté, déplacé, supprimé, journée vidée) sans toucher au modèle.
   La journée se détache alors automatiquement du modèle, et un bouton
   « Revenir au modèle » permet de la raccrocher.
-- **Trois vues** — mois (grille avec le type de semaine en marge, comme sur
-  le papier), semaine (grille horaire, chevauchements affichés côte à côte),
-  jour (liste détaillée et modifiable).
+- **Trois vues** — la semaine est la vue d'accueil : numéro de semaine ISO
+  (« Semaine 36 »), dates couvertes, et les sept jours en liste verticale,
+  lisible d'un pouce sur téléphone. Sur grand écran, cette liste laisse place
+  à une grille horaire où les chevauchements s'affichent côte à côte. Le mois
+  reprend la marge du planning papier — numéro de semaine et type A/B — et le
+  jour offre le détail modifiable.
 
 Stack : Next.js 16 (App Router, React Server Components), Tailwind CSS 4,
 Supabase (Postgres + authentification), déploiement Vercel.

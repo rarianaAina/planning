@@ -9,7 +9,7 @@ type Mode = "signin" | "signup";
 export function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = params.get("suivant") || "/mois";
+  const next = params.get("suivant") || "/semaine";
   const guestUnavailable = params.get("invite") === "impossible";
 
   const [mode, setMode] = useState<Mode>("signin");
