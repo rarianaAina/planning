@@ -40,7 +40,7 @@ export function DayList({ days, today }: { days: ResolvedDay[]; today: string })
                 )}
                 {day.customized && <CustomBadge />}
                 <span className="ml-auto shrink-0 text-xs font-semibold text-[var(--muted)]">
-                  {minutes > 0 ? formatDuration(minutes) : "Libre"}
+                  {minutes > 0 ? formatDuration(minutes) : "Repos"}
                 </span>
               </div>
 

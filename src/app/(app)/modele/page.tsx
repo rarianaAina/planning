@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SlotForm } from "@/components/SlotForm";
 import { SubmitButton } from "@/components/SubmitButton";
 import { SlotRow } from "@/components/SlotVisuals";
+import { WeekHoursForm, type DayHours } from "@/components/WeekHoursForm";
 import {
   copyWeekAction,
   deleteTemplateSlotAction,
@@ -51,6 +52,18 @@ export default async function ModelePage({
         color: slot.color,
       }))
       .sort((a, b) => a.startMin - b.startMin);
+
+  const hours: DayHours[] = WEEKDAY_LABELS.map((_, i) => {
+    const weekday = i + 1;
+    const daySlots = byWeekday(weekday);
+    if (daySlots.length === 0) return { weekday, mode: "off" };
+    if (daySlots.length === 1) {
+      return { weekday, mode: "work", start: daySlots[0].start, end: daySlots[0].end };
+    }
+    return { weekday, mode: "multi", count: daySlots.length };
+  });
+  // Le détail s'ouvre d'office dès qu'un jour sort du simple « une plage ».
+  const hasDetail = hours.some((h) => h.mode === "multi");
 
   return (
     <>
@@ -111,6 +124,22 @@ export default async function ModelePage({
           )}
         </div>
       </div>
+
+      <section className="mb-6">
+        <h2 className="mb-1 text-sm font-semibold">Horaires de la semaine {week}</h2>
+        <p className="mb-3 text-xs text-[var(--muted)]">
+          Pour chaque jour, indiquez si vous travaillez et à quelles heures.
+        </p>
+        <WeekHoursForm key={week} week={week} days={hours} />
+      </section>
+
+      <details className="group" open={hasDetail}>
+        <summary className="mb-3 cursor-pointer text-sm font-semibold">
+          Détail des créneaux{" "}
+          <span className="font-normal text-[var(--muted)]">
+            — plusieurs créneaux par jour, intitulé, lieu, couleur
+          </span>
+        </summary>
 
       <div className="grid gap-3 lg:grid-cols-2">
         {WEEKDAY_LABELS.map((label, i) => {
@@ -178,6 +207,7 @@ export default async function ModelePage({
           );
         })}
       </div>
+      </details>
 
       <p className="mt-4 text-xs text-[var(--muted)]">
         Les journées déjà modifiées à la main dans la vue jour ne suivent plus le

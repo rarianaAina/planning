@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "./supabase/server";
 import { getSettings, getTemplateSlots, requireUser } from "./queries";
-import { isoWeekday, mondayOf, timeToMinutes } from "./date";
+import { isoWeekday, mondayOf, timeToMinutes, WEEKDAY_LABELS } from "./date";
 import { weekTypeFor } from "./schedule";
 import { DEFAULT_COLOR, isColorName } from "./colors";
 import type { WeekType } from "./types";
@@ -131,6 +131,85 @@ export async function deleteTemplateSlotAction(formData: FormData) {
     await supabase.from("template_slots").delete().eq("id", id).eq("user_id", user.id);
     refresh();
   }
+}
+
+/**
+ * Saisie rapide des horaires d'une semaine type : pour chaque jour, repos
+ * (aucun créneau) ou une plage de travail. Les jours à plusieurs créneaux
+ * sont envoyés en mode « keep » et laissés tels quels.
+ */
+export async function saveWeekHoursAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const week = readWeekType(formData.get("week_type"));
+
+  type Plan = { weekday: number; mode: "off" | "work"; start: string; end: string };
+  const plans: Plan[] = [];
+
+  for (let weekday = 1; weekday <= 7; weekday++) {
+    const mode = String(formData.get(`d${weekday}_mode`) ?? "keep");
+    if (mode === "off") {
+      plans.push({ weekday, mode, start: "", end: "" });
+      continue;
+    }
+    if (mode !== "work") continue;
+
+    const label = WEEKDAY_LABELS[weekday - 1];
+    const start = String(formData.get(`d${weekday}_start`) ?? "").trim();
+    const end = String(formData.get(`d${weekday}_end`) ?? "").trim();
+    if (!/^\d{2}:\d{2}$/.test(start) || !/^\d{2}:\d{2}$/.test(end)) {
+      return fail(`${label} : horaires invalides.`);
+    }
+    if (timeToMinutes(end) <= timeToMinutes(start)) {
+      return fail(`${label} : l'heure de fin doit être après l'heure de début.`);
+    }
+    plans.push({ weekday, mode, start, end });
+  }
+
+  const existing = (await getTemplateSlots()).filter((s) => s.week_type === week);
+
+  for (const plan of plans) {
+    const daySlots = existing.filter((s) => s.weekday === plan.weekday);
+
+    if (plan.mode === "off") {
+      if (daySlots.length === 0) continue;
+      const { error } = await supabase
+        .from("template_slots")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("week_type", week)
+        .eq("weekday", plan.weekday);
+      if (error) return fail(error.message);
+      continue;
+    }
+
+    // Un seul créneau : on ne change que les horaires (titre, lieu et
+    // couleur sont conservés). Aucun : on crée un créneau « Travail ».
+    const { error } =
+      daySlots.length === 1
+        ? await supabase
+            .from("template_slots")
+            .update({ start_time: plan.start, end_time: plan.end })
+            .eq("id", daySlots[0].id)
+            .eq("user_id", user.id)
+        : daySlots.length === 0
+          ? await supabase.from("template_slots").insert({
+              user_id: user.id,
+              week_type: week,
+              weekday: plan.weekday,
+              start_time: plan.start,
+              end_time: plan.end,
+              title: "Travail",
+              color: DEFAULT_COLOR,
+            })
+          : { error: null };
+    if (error) return fail(error.message);
+  }
+
+  refresh();
+  return OK;
 }
 
 /** Recopie tous les créneaux d'une semaine type vers l'autre (écrase la cible). */

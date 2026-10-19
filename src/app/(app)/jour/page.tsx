@@ -106,7 +106,7 @@ export default async function JourPage({
 
       {day.slots.length === 0 ? (
         <div className="card px-6 py-12 text-center">
-          <p className="text-sm font-medium">Journée libre</p>
+          <p className="text-sm font-medium">Repos</p>
           <p className="mx-auto mt-1.5 max-w-sm text-sm text-[var(--muted)]">
             Rien n&rsquo;est prévu. Ajoutez un créneau ponctuel ici, ou complétez la{" "}
             <Link href="/modele" className="text-[var(--accent)] hover:underline">
