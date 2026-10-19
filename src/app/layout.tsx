@@ -5,6 +5,12 @@ export const metadata: Metadata = {
   title: "Mon planning A/B",
   description:
     "Emploi du temps en semaines alternées A et B, consultable par jour, par semaine et par mois.",
+  // Ajout à l'écran d'accueil de l'iPhone : nom sous l'icône, et ouverture
+  // en plein écran, sans la barre de Safari. L'icône est `app/apple-icon.png`.
+  appleWebApp: {
+    title: "Planning",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {
