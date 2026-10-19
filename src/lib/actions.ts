@@ -1,8 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { createClient } from "./supabase/server";
 import { getSettings, getTemplateSlots, requireUser } from "./queries";
 import { isoWeekday, mondayOf, timeToMinutes, WEEKDAY_LABELS } from "./date";
 import { weekTypeFor } from "./schedule";
@@ -406,14 +404,4 @@ export async function deleteDaySlotAction(formData: FormData) {
 
   await supabase.from("override_slots").delete().eq("id", id).eq("user_id", user.id);
   refresh();
-}
-
-// =====================================================================
-// Session
-// =====================================================================
-export async function signOutAction() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  revalidatePath("/", "layout");
-  redirect("/login");
 }

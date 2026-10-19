@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { signOutAction } from "@/lib/actions";
+import { OWNER_NAME } from "@/lib/owner";
 import { requireUser } from "@/lib/queries";
 
 export default async function AppLayout({
@@ -7,7 +7,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = await requireUser();
+  await requireUser();
 
   return (
     <div className="flex min-h-full flex-col">
@@ -36,25 +36,7 @@ export default async function AppLayout({
             >
               Réglages
             </Link>
-            {user.is_anonymous ? (
-              <Link
-                href="/reglages#compte"
-                className="badge badge-custom !py-1"
-                title="Planning enregistré pour ce navigateur uniquement — associez-lui un e-mail pour le conserver"
-              >
-                Mode invité
-              </Link>
-            ) : (
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="rounded-lg px-2.5 py-1.5 text-[0.8125rem] font-semibold text-[var(--muted)] hover:bg-[var(--surface-muted)]"
-                  title={user.email ?? undefined}
-                >
-                  Quitter
-                </button>
-              </form>
-            )}
+            <span className="badge !py-1">{OWNER_NAME}</span>
           </div>
         </div>
       </header>

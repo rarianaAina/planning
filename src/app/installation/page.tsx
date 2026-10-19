@@ -1,3 +1,5 @@
+import { OWNER_NAME } from "@/lib/owner";
+
 export const metadata = { title: "Installation — Mon planning A/B" };
 
 const STEPS = [
@@ -29,14 +31,15 @@ const STEPS = [
     ),
   },
   {
-    title: "Autoriser l'accès sans compte",
+    title: "Désactiver la confirmation par e-mail",
     body: (
       <>
-        Dans <strong>Authentication → Sign In / Providers</strong>, activer{" "}
-        <strong>Anonymous Sign-Ins</strong>. C&rsquo;est ce qui permet
-        d&rsquo;utiliser l&rsquo;application sans inscription. Sans cette
-        option, l&rsquo;application fonctionne, mais impose la création
-        d&rsquo;un compte.
+        Dans <strong>Authentication → Sign In / Providers → Email</strong>,
+        décochez <strong>Confirm email</strong>. L&rsquo;application crée
+        alors elle-même le compte de {OWNER_NAME} au premier accès. Sinon,
+        lancez une fois{" "}
+        <code className="font-mono text-[0.8em]">npm run create-user</code>{" "}
+        (voir le README).
       </>
     ),
   },
@@ -65,10 +68,29 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGci...`,
   },
 ];
 
-export default function InstallationPage() {
+export default async function InstallationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ compte?: string }>;
+}) {
+  const { compte } = await searchParams;
+
   return (
     <main className="mx-auto w-full max-w-2xl px-4 py-12">
       <h1 className="text-2xl font-bold tracking-tight">Configuration requise</h1>
+      {compte === "impossible" && (
+        <p
+          role="alert"
+          className="mt-4 rounded-lg bg-[color-mix(in_oklab,var(--danger)_12%,transparent)] px-3 py-2.5 text-sm text-[var(--danger)]"
+        >
+          Supabase est bien branché, mais le compte de {OWNER_NAME} n&rsquo;a
+          pas pu être ouvert. Vérifiez l&rsquo;étape 3 ci-dessous, puis{" "}
+          <a href="/semaine" className="font-semibold underline">
+            rouvrez l&rsquo;application
+          </a>
+          .
+        </p>
+      )}
       <p className="mt-2 text-sm text-[var(--muted)]">
         L&rsquo;application a besoin d&rsquo;une base Supabase pour enregistrer le
         planning. Cinq étapes, une seule fois.

@@ -9,7 +9,9 @@ import { mondayOf, todayISO } from "./date";
 export const requireUser = cache(async () => {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  // Le proxy ouvre toujours la session de Colombe ; sans elle, c'est que le
+  // compte n'a pas pu être ouvert.
+  if (!user) redirect("/installation?compte=impossible");
   return { supabase, user };
 });
 

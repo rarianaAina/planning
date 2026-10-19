@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "create-user": "node --env-file=.env.local --experimental-strip-types --no-warnings scripts/create-user.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",
